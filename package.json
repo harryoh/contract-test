@@ -1,0 +1,27 @@
+{
+  "name": "contract-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rimraf ./cache && rimraf ./artifacts",
+    "build": "hardhat compile",
+    "test": "hardhat test",
+    "start:klaytn": "hardhat run scripts/sendViaTransfer.js --network klaytn",
+    "start:ether": "hardhat run scripts/sendViaTransfer.js --network ether"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "chai": "^4.3.6",
+    "ethereum-waffle": "^3.4.0",
+    "ethers": "^5.5.4",
+    "hardhat": "^2.9.1"
+  },
+  "dependencies": {
+    "rimraf": "^3.0.2"
+  }
+}

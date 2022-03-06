@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  klaytn:
+    image: onthertech/klaytn:latest
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        mkdir -p /klaytn
+        echo '{"config":{"chainId":203,"istanbul":{"epoch":604800,"policy":0,"sub":21},"unitPrice":0,"deriveShaImpl":0,"governance":null},"timestamp":"0x621c7680","extraData":"0x0000000000000000000000000000000000000000000000000000000000000000f85ad594f39fd6e51aad88f6f4ce6ab8827279cfffb92266b8410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c0","governanceData":null,"blockScore":"0x1","alloc":{"f39fd6e51aad88f6f4ce6ab8827279cfffb92266":{"balance":"0x446c3b15f9926687d2c40534fdb564000000000000"}},"number":"0x0","gasUsed":"0x0","parentHash":"0x0000000000000000000000000000000000000000000000000000000000000000"}' > /klaytn/genesis.json
+        echo '["kni://04b82e0dd998739acdbcb1c7d8aadd7da12cfe63df9897cf3b3e930288072c32438769c1e148c6eb7e02863efe0fc1c60e891882a1af87f8e5e56f1e780eb8a0@localhost:32323?discport=0\u0026ntype=cn"]' > /klaytn/static-nodes.json
+        kcn --datadir "/klaytn" init "/klaytn/genesis.json"
+        echo "# docker-compose" >> /klaytn-docker-pkg/conf/kcnd.conf
+        echo 'NETWORK=""' >> /klaytn-docker-pkg/conf/kcnd.conf
+        echo 'DATA_DIR="/klaytn"' >> /klaytn-docker-pkg/conf/kcnd.conf
+        echo 'LOG_DIR="$$DATA_DIR/log"' >> /klaytn-docker-pkg/conf/kcnd.conf
+        echo 'RPC_ENABLE=1' >> /klaytn-docker-pkg/conf/kcnd.conf
+        echo 'RPC_API="db,klay,net,web3,miner,personal,txpool,debug,admin,istanbul,mainbridge,subbridge"' >> /klaytn-docker-pkg/conf/kcnd.conf
+        echo 'WS_ENABLE=1' >> /klaytn-docker-pkg/conf/kcnd.conf
+        echo 'WS_API="db,klay,net,web3,miner,personal,txpool,debug,admin,istanbul,mainbridge,subbridge"' >> /klaytn-docker-pkg/conf/kcnd.conf
+        echo 'NETWORK_ID="203"' >> /klaytn-docker-pkg/conf/kcnd.conf
+        echo 'NO_DISCOVER=1' >> /klaytn-docker-pkg/conf/kcnd.conf
+        echo 'ADDITIONAL="$$ADDITIONAL --identity \"CN-0\""' >> /klaytn-docker-pkg/conf/kcnd.conf
+        echo 'ADDITIONAL="$$ADDITIONAL --nodekeyhex ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"' >> /klaytn-docker-pkg/conf/kcnd.conf
+        echo 'REWARDBASE=0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266' >> /klaytn-docker-pkg/conf/kcnd.conf
+        echo 'ADDITIONAL="$$ADDITIONAL --debug --metrics --prometheus"' >> /klaytn-docker-pkg/conf/kcnd.conf
+        /klaytn-docker-pkg/bin/kcnd start
+        sleep 1
+        ken attach --exec "personal.importRawKey('ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80', '')" http://localhost:8551
+        ken attach --exec "personal.unlockAccount('0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266', '', 60)" http://localhost:8551
+        tail -F klaytn/log/kcnd.out
+    ports:
+      - 8551:8551
+
+  hardhat:
+    image: onthertech/optimism.hardhat-node:dev-latest
+    ports:
+      - 8545:8545
