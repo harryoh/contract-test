@@ -7,8 +7,8 @@
     "clean": "rimraf ./cache && rimraf ./artifacts",
     "build": "hardhat compile",
     "test": "hardhat test",
-    "start:klaytn": "hardhat run scripts/sendViaTransfer.js --network klaytn",
-    "start:ether": "hardhat run scripts/sendViaTransfer.js --network ether"
+    "start:klaytn": "hardhat run scripts/sendTest.js --network klaytn",
+    "start:ether": "hardhat run scripts/sendTest.js --network ether"
   },
   "keywords": [],
   "author": "",
