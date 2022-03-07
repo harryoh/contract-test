@@ -51,7 +51,7 @@ async function main() {
   console.log('Sending 1ETH from Bridge using Transfer....');
   tx = await bridgeContract.sendViaTransfer(
     deployer.address,
-    100,
+    ethers.utils.parseEther("1"),
     {
       value: 0,
       gasLimit: 1500000,
