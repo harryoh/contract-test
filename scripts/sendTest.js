@@ -26,22 +26,22 @@ async function main() {
   console.log(`Bridge balance: ${ethers.utils.formatEther(await provider.getBalance(bridgeContract.address))}\n`);
 
   let prevBalance;
+  let tx;
+  let receipt;
+
 
   prevBalance = await provider.getBalance(bridgeContract.address);
 
-  console.log('Sending 1ETH to Bridge....');
-  await deployer.sendTransaction({
+  console.log('Sending 10ETH to Bridge....');
+  tx = await deployer.sendTransaction({
     to: bridgeContract.address,
     value: ethers.utils.parseEther("10"),
     gasLimit: 1500000,
     gasPrice: 0
   });
-
-  // await bridgeContract.deposit({
-  //   value: ethers.utils.parseEther("1"),
-  //   gasLimit: 1500000,
-  //   gasPrice: 0
-  // });
+  console.log(`TX Hash: ${tx.hash}`);
+  receipt = await tx.wait();
+  console.log(`Receipt Status: ${receipt.status}`);
 
   await waitChangeBalance(prevBalance, bridgeContract.address);
   console.log(`[Done] Bridge balance: ${ethers.utils.formatEther(await provider.getBalance(bridgeContract.address))}\n`);
@@ -49,44 +49,54 @@ async function main() {
   // test sendViaTransfer
   prevBalance = await provider.getBalance(bridgeContract.address);
   console.log('Sending 1ETH from Bridge using Transfer....');
-  await bridgeContract.sendViaTransfer(
+  tx = await bridgeContract.sendViaTransfer(
     deployer.address,
-    ethers.utils.parseEther("1"),
+    100,
     {
       value: 0,
       gasLimit: 1500000,
       gasPrice: 0
     });
-  await waitChangeBalance(prevBalance, bridgeContract.address, 30);
+  console.log(`TX Hash: ${tx.hash}`);
+  receipt = await tx.wait();
+  console.log(`Receipt Status: ${receipt.status}`);
+
+  await waitChangeBalance(prevBalance, bridgeContract.address);
   console.log(`[Done] Bridge balance: ${ethers.utils.formatEther(await provider.getBalance(bridgeContract.address))}\n`);
 
   // test sendViaSend
-  prevBalance = await provider.getBalance(bridgeContract.address);
-  console.log('Sending 1ETH to deployer using Send....');
-  await bridgeContract.sendViaSend(
-    deployer.address,
-    ethers.utils.parseEther("1"),
-    {
-      value: 0,
-      gasLimit: 1500000,
-      gasPrice: 0
-    });
-  await waitChangeBalance(prevBalance, bridgeContract.address, 30);
-  console.log(`[Done] Bridge balance: ${ethers.utils.formatEther(await provider.getBalance(bridgeContract.address))}\n`);
+  // prevBalance = await provider.getBalance(bridgeContract.address);
+  // console.log('Sending 1ETH to deployer using Send....');
+  // tx = await bridgeContract.sendViaSend(
+  //   deployer.address,
+  //   ethers.utils.parseEther("1"),
+  //   {
+  //     value: 0,
+  //     gasLimit: 1500000,
+  //     gasPrice: 0
+  //   });
+  // console.log(`TX Hash: ${tx.hash}`);
+  // receipt = await tx.wait();
+  // console.log(`Receipt Status: ${receipt.status}`);
+  // await waitChangeBalance(prevBalance, bridgeContract.address, 30);
+  // console.log(`[Done] Bridge balance: ${ethers.utils.formatEther(await provider.getBalance(bridgeContract.address))}\n`);
 
   // test sendViaCall
-  prevBalance = await provider.getBalance(bridgeContract.address);
-  console.log('Sending 1ETH to deployer using Call....');
-  await bridgeContract.sendViaCall(
-    deployer.address,
-    ethers.utils.parseEther("1"),
-    {
-      value: 0,
-      gasLimit: 1500000,
-      gasPrice: 0
-    });
-  await waitChangeBalance(prevBalance, bridgeContract.address, 30);
-  console.log(`[Done] Bridge balance: ${ethers.utils.formatEther(await provider.getBalance(bridgeContract.address))}`);
+  // prevBalance = await provider.getBalance(bridgeContract.address);
+  // console.log('Sending 1ETH to deployer using Call....');
+  // tx = await bridgeContract.sendViaCall(
+  //   deployer.address,
+  //   ethers.utils.parseEther("1"),
+  //   {
+  //     value: 0,
+  //     gasLimit: 1500000,
+  //     gasPrice: 0
+  //   });
+  // console.log(`TX Hash: ${tx.hash}`);
+  // receipt = await tx.wait();
+  // console.log(`Receipt Status: ${receipt.status}`);
+  // await waitChangeBalance(prevBalance, bridgeContract.address, 30);
+  // console.log(`[Done] Bridge balance: ${ethers.utils.formatEther(await provider.getBalance(bridgeContract.address))}`);
 }
 
 main()
